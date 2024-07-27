@@ -5,7 +5,7 @@ const path = require('path');
 
 const app = express();
 app.use(express.json());
-app.use(express.static('public')); // Serve static files from the 'public' directory
+app.use(express.static('docs')); 
 
 const HASURA_ENDPOINT = process.env.HASURA_ENDPOINT;
 const HASURA_ADMIN_SECRET = process.env.HASURA_ADMIN_SECRET;
@@ -18,7 +18,7 @@ const setHeaders = (req, res, next) => {
 
 // Root endpoint for basic testing
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'docs', 'index.html'));
 });
 
 app.post('/addUser', setHeaders, async (req, res) => {
@@ -57,38 +57,7 @@ app.post('/addUser', setHeaders, async (req, res) => {
 });
 
 
-app.get('/getBalance/:userId', setHeaders, async (req, res) => {
-    const userId = parseInt(req.params.userId);
 
-    try {
-        // Fetch current balance
-        const userQuery = `
-            query ($id: Int!) {
-                users_by_pk(id: $id) {
-                    balance
-                }
-            }
-        `;
-        const userResponse = await axios.post(
-            HASURA_ENDPOINT,
-            {
-                query: userQuery,
-                variables: { id: userId }
-            },
-            {
-                headers: {
-                    'x-hasura-admin-secret': HASURA_ADMIN_SECRET
-                }
-            }
-        );
-
-        const balance = userResponse.data.data.users_by_pk.balance;
-        res.status(200).json({ balance });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'An error occurred' });
-    }
-});
 
 
 app.post('/deposit', setHeaders, async (req, res) => {
