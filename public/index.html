@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fintech Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            margin: auto;
+            padding: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .container h1, .container h2 {
+            color: #333;
+            text-align: center;
+        }
+        .container .action {
+            margin-bottom: 20px;
+            animation: slideIn 1s ease-in-out;
+        }
+        .container input {
+            width: calc(100% - 24px);
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .container button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .container button:hover {
+            background-color: #0056b3;
+        }
+        .container p {
+            text-align: center;
+            color: #333;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fintech Platform</h1>
+        <div class="action">
+            <h2>Add User</h2>
+            <input type="text" id="add-user-name" placeholder="Name">
+            <input type="number" id="add-user-balance" placeholder="Initial Balance">
+            <button onclick="addUser()">Add User</button>
+            <p id="add-user-result"></p>
+        </div>
+        <div class="action">
+            <h2>Deposit</h2>
+            <input type="number" id="deposit-user-id" placeholder="User ID">
+            <input type="number" id="deposit-amount" placeholder="Amount">
+            <button onclick="deposit()">Deposit</button>
+            <p id="deposit-result"></p>
+        </div>
+        <div class="action">
+            <h2>Withdraw</h2>
+            <input type="number" id="withdraw-user-id" placeholder="User ID">
+            <input type="number" id="withdraw-amount" placeholder="Amount">
+            <button onclick="withdraw()">Withdraw</button>
+            <p id="withdraw-result"></p>
+        </div>
+        <div class="action">
+            <h2>Check Balance</h2>
+            <input type="number" id="balance-user-id" placeholder="User ID">
+            <button onclick="getBalance()">Check Balance</button>
+            <p id="balance-result"></p>
+        </div>
+    </div>
+    <script>
+        async function addUser() {
+            const name = document.getElementById('add-user-name').value;
+            const balance = document.getElementById('add-user-balance').value;
+            const response = await fetch('/addUser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, balance: parseFloat(balance) })
+            });
+            const data = await response.json();
+            document.getElementById('add-user-result').textContent = JSON.stringify(data);
+            document.getElementById('add-user-name').value = '';
+            document.getElementById('add-user-balance').value = '';
+        }
+
+        async function deposit() {
+            const userId = document.getElementById('deposit-user-id').value;
+            const amount = document.getElementById('deposit-amount').value;
+            const response = await fetch('/deposit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: parseInt(userId), amount: parseFloat(amount) })
+            });
+            const data = await response.json();
+            document.getElementById('deposit-result').textContent = JSON.stringify(data);
+            document.getElementById('deposit-user-id').value = '';
+            document.getElementById('deposit-amount').value = '';
+        }
+
+        async function withdraw() {
+            const userId = document.getElementById('withdraw-user-id').value;
+            const amount = document.getElementById('withdraw-amount').value;
+            const response = await fetch('/withdraw', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: parseInt(userId), amount: parseFloat(amount) })
+            });
+            const data = await response.json();
+            document.getElementById('withdraw-result').textContent = JSON.stringify(data);
+            document.getElementById('withdraw-user-id').value = '';
+            document.getElementById('withdraw-amount').value = '';
+        }
+
+        async function getBalance() {
+            const userId = document.getElementById('balance-user-id').value;
+            const response = await fetch(`/getBalance/${userId}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await response.json();
+            document.getElementById('balance-result').textContent = JSON.stringify(data);
+            document.getElementById('balance-user-id').value = '';
+        }
+    </script>
+</body>
+</html>
